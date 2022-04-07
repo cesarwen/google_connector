@@ -14,7 +14,19 @@ import sys
 
 class SheetsAPI:
 
+
     def __init__(self):
+        """ 
+        ## Description
+
+        - Object that helps you to connect to the google API given the oauth credentials tonken 
+
+        ## Functions
+
+        - __init__ it needs the path to the credentials token
+        - 
+        - ReadFromSheets: given sheets parameters reads the contents in the google sheets and writes it to a dataframe
+        """
         SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
         service_name = 'sheets'
         api_version = 'v4'
@@ -66,6 +78,18 @@ class SheetsAPI:
         input_options='USER_ENTERED',
         use_comma=False
     ):
+        """
+        # Parameters:
+        - spreadsheet_id: the id from the google sheets to be inserted into
+        - df: dataframe to be inserted into google sheets
+        - worksheet_name: name of the tab for the data to be inserted
+        - cell_range_insert: withing the tab in with location it should be added
+        - major_dimensions: orientation from the data
+        - input_options: to be logged as a user os as formula
+        - use_comma: to use comma as decimal separator
+
+
+        """
 
         # standard parameters treatment
         worksheet_name += "!"
@@ -100,18 +124,26 @@ class SheetsAPI:
         self,
         spreadsheet_id:str,
         worksheet_name:str,
-        cell_range_insert:str='A1',
+        cell_range_read:str='A1',
         header:bool=False,
         dropna:bool=True
     ):
+        """
+        # Parameters:
+        - spreadsheet_id: the id from the google sheets to be inserted into
+        - worksheet_name: name of the tab for the data to be inserted
+        - cell_range_read: withing the tab in with location it should be added (sheets notation)
+        - header: uses first row as header for the dataframe
+        - dropna: removes lines with empty data
 
+        """
         try:
             # standard parameters treatment
             sheet = self.service.spreadsheets()
             worksheet_name += "!"
             result = sheet.values().get(
                 spreadsheetId=spreadsheet_id,
-                range=worksheet_name + cell_range_insert).execute()
+                range=worksheet_name + cell_range_read).execute()
             values = result.get('values', [])
             df = pd.DataFrame(values)
 
